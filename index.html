@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+        body{
+            font-family: "Chewy", system-ui;
+        }
+        .game-container{
+          
+            border: 3px;
+            border-color: black;
+            flex-direction: column;
+            margin :auto;
+            text-align: center;
+            max-width: 400px;
+           margin-top: 50px;
+           border-radius: 20px;
+         border-color: rgb(121, 121, 121);
+         padding: 20px;
+        box-shadow: 0 8px 10px 3px rgba(0, 0, 0, 0.1), 0 4px 6px 3px rgba(0, 0, 0, 0.06);
+
+        }
+        .btn{
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            margin: 12px;
+            gap: 8px !important;
+            border-radius: 5px;
+             font-family: "Chewy", system-ui;
+    
+        }
+        .btn:hover{
+            background-color: #0056b3;
+        }
+        #restart{
+            margin-top: 50px !important;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            margin: auto;
+            text-align: center;
+            align-items: center;
+            background-color: #6de38f;
+            border-radius: 5px;
+             border: none;
+             
+              font-family: "Chewy", system-ui;
+        }
+        #restart:hover{
+            background-color: #95e8b6;
+            
+        }
+    </style>
+</head>
+<body>
+    
+        
+    <section>
+        <div class="game-container">
+            <h1>Guess The Number!</h1>
+            <p>I'm thinking of a number from 1 - 10!</p>
+            <div class="choice">
+
+            </div>
+            <p class="message"></p>
+            <p class ="score"></p>
+        </div>
+        <button id="restart" onclick="restartGame()">Restart</button>
+
+        <audio src="./Click.mp3" id="Click"></audio>
+        <audio src="./fanfare.mp3" id="Win"></audio>
+        <audio src="./WRong0.mp3" id="Wrong"></audio>
+        <audio src="./start.mp3" id="start"></audio>
+
+    </section>
+
+<script>
+    
+
+    
+    const maxGuess = 3
+    let attemptLeft = maxGuess
+    let message = document.querySelector('.message')
+    let attempt= document.querySelector('.score')
+    let choiceContainer = document.querySelector('.choice')
+    let restart = document.getElementById('restart')
+    let click = document.getElementById('Click')
+    let win = document.getElementById('Win')
+let start = document.getElementById('start')
+
+
+let wrong = document.getElementById('Wrong')
+    let randomNumber = Math.floor(Math.random()*10 ) + 1
+    
+    console.log(randomNumber)
+    function generateChoices() {
+        choiceContainer.innerHTML= ""
+        for (let index = 1; index <= 10; index++) {
+            const button = document.createElement('button')
+            button.className = 'btn'
+            button.textContent = index
+            choiceContainer.appendChild(button)
+            button.onclick=()=> HandleChoiceClick(index)
+        }
+       
+    }
+
+    function UpdateMessage(text) {
+        message.textContent=text
+
+    }
+    function UpdateScore() {
+        attempt.textContent=`Attempt Left: ${attemptLeft}`
+
+    }
+    function HandleChoiceClick(number) {
+    
+        if (attemptLeft > 0) {
+            if (number === randomNumber) {
+                UpdateMessage('Correct! You guessed the number!')
+                win.play()
+                endGame(true)
+            }
+            else{
+                attemptLeft--
+                if (attemptLeft===0) {
+                    UpdateMessage(`Game Over! The number was ${randomNumber}`)
+                    endGame(false)
+                }
+                else{
+                    UpdateMessage(
+                        number> randomNumber? 'Too High. Try Again!':'Too low. Try Again!'
+                    )
+                    wrong.play()
+                
+                }
+                UpdateScore()
+                click.play()
+            }
+        }
+        
+    }
+function endGame(win) {
+    const button = document.querySelectorAll('.choices button')
+    button.forEach(button => {
+        button.disabled=true
+
+    });
+    restart.style.display='block'
+}
+    function restartGame() {
+        start.play()
+         randomNumber = Math.floor(Math.random()*10 ) + 1
+         console.log(randomNumber)
+         attemptLeft=maxGuess
+         UpdateMessage('')
+         UpdateScore()
+         
+         generateChoices()
+restart.style.display='none'
+    }
+    generateChoices()
+    
+    UpdateScore()
+   
+
+</script>
+
+</body>
+</html>
